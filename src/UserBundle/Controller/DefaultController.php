@@ -52,11 +52,10 @@ class DefaultController extends Controller
 //        ));
     }
 
-    public function captchaAction()
+    public function captchaAction(Request $request)
     {
-        $req = $this->getRequest();
-        $width = intval($req->get('width')) ?: 130;  // 验证码图片的宽度
-        $height = intval($req->get('height')) ?: 40;  // 验证码图片的高度
+        $width = intval($request->get('width')) ?: 130;  // 验证码图片的宽度
+        $height = intval($request->get('height')) ?: 40;  // 验证码图片的高度
         $length = 5;  // 验证码字符的长度
         $no_effect = true;  // 是否忽略验证图片上的干扰线条
         $pharse = new PhraseBuilder();
@@ -64,7 +63,7 @@ class DefaultController extends Controller
         $image = $captcha->setIgnoreAllEffects($no_effect)->build($width, $height)->get();
         $captchaNo = $captcha->getPhrase();
         //设置session
-        $session = $req->getSession();
+        $session = $this->getRequest()->getSession();
         $session->set('captcha', $captchaNo);
         $res = new Response($image);
         $res->headers->set('content-type', 'image/jpeg');
