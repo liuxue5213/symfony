@@ -1,0 +1,27 @@
+index:
+    path:     /
+    defaults: { _controller: UserBundle:Default:index }
+
+user_index:
+    path:     /user/index
+    defaults: { _controller: UserBundle:Default:userIndex }
+
+user_login:
+    path:     /user/login
+    defaults: { _controller: UserBundle:Default:login }
+
+user_post_login:
+    path:     /user/postLogin
+    defaults: { _controller: UserBundle:Default:postLogin }
+
+user_register:
+    path:     /user/register
+    defaults: { _controller: UserBundle:Default:register }
+
+common_captcha:
+    path:     /user/captcha
+    defaults: { _controller: UserBundle:Default:captcha }
+
+valid_captcha:
+    path:     /valid/captcha
+    defaults: { _controller: UserBundle:Default:ajaxValidCaptcha }

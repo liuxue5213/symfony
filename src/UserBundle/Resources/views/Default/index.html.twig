@@ -1,0 +1,65 @@
+{% extends 'UserBundle:Layout:index.html.twig' %}
+
+{% block content %}
+    <h1>JohnScott1989</h1>
+    {# {{ form(form) }} #}
+    <form action="{{ path('user_post_login') }}" method="post">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <input type="text" id="username" class="username" placeholder="请输入您的用户名！">
+        <input type="password" id="password" class="password" placeholder="请输入您的用户密码！">
+        <input type="Captcha" class="Captcha" name="captcha" placeholder="请输入验证码！" onchange="check_captcha(this.value)">
+        <img id="img" title="点击刷新" src="/user/captcha?width=130&height=40" align="absbottom" style="padding:25px 0px  15px 0px;" onclick="reload()"></img>
+        <input type="hidden" id="form-data" name="form-data" value="">
+        <button id="sub" class="submit_button">登录</button>
+        <div class="error"><span>+</span></div>
+    </form>
+    <div class="connect">
+        <p>快速登录</p>
+        <p>
+            <a class="facebook" href=""></a>
+            <a class="twitter" href=""></a>
+        </p>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript" src="{{ asset('/js/crypto-js/aes.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/js/crypto-js/md5.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/js/crypto-js/pad-zeropadding.js') }}"></script>
+<script type="text/javascript" src="{{ asset('/js/md5.js') }}"></script>
+
+<script>
+    {# 刷新验证码 #}
+    function reload()
+    {
+        var img = document.getElementById("img");
+        img.src = "/user/captcha?width=130&height=40";
+    }
+
+    {# Ajax 校验验证码 #}
+    function check_captcha(captcha)
+    {
+        $.ajax({
+            url: "/user/valid/captcha",
+            data: { "cno": captcha },
+            datatype: "json",
+            type: "get",
+            success: function (data) {
+                if(data == '10001'){
+                    $("#form-data").val('');
+                    $('.page-container form').find('.error').css('top', '165px');
+                    $('.page-container form').find('.error').fadeIn('fast', function(){
+                        $(this).parent().find('.Captcha').focus();
+                    });
+                }else{
+                    $("#form-data").val('1');
+                    $('.page-container form').find('.error').fadeOut('fast',  function(){
+                        $(this).css('top', '165px');
+                    });
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

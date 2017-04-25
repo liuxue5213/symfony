@@ -1,0 +1,12 @@
+services:
+    user.func:
+        class: UserBundle\Common\Func
+        arguments: [php_decode]
+
+    user.model:
+        class: UserBundle\Model\UserModel
+        arguments: ["@service_container"]
+
+#    user.example:
+#        class: UserBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
