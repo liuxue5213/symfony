@@ -73,7 +73,7 @@ class DefaultController extends Controller
     public function postLoginAction(Request $request)
     {
         //判断验证码 TOKEN REFERER
-        $this->isCsrfValid($request);
+        $this->get('user.model')->isCsrfValid($request);
         $captcha = $request->get('captcha');
         $session = $this->getRequest()->getSession();
         if ($session->get('captcha') != $captcha) {
@@ -149,7 +149,7 @@ class DefaultController extends Controller
     {
         //判断TOKEN  POST数据
         if ($request->get('form-data')) {
-            // DefaultController::isCsrfValid($request);
+            $this->get('user.model')->isCsrfValid($request);
             $postData = $request->get('form-data');
             $func = $this->get('user.func');
             $arr = $func->php_decode('johnscott1989101', $postData);
@@ -186,7 +186,6 @@ class DefaultController extends Controller
 
 
             // return $this->redirect($this->generateUrl('admin_index'));
-            exit;
         }
         return $this->render('UserBundle:Default:register.html.twig', array(
             // 'form' => $form->createView(),
