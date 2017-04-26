@@ -3,7 +3,6 @@
 namespace UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Gregwar\Captcha\PhraseBuilder;
 use Gregwar\Captcha\CaptchaBuilder;
@@ -39,7 +38,7 @@ class DefaultController extends Controller
 
     public function loginAction()
     {
-        // $user = new JsUser();
+    // $user = new JsUser();
         // $form = $this->createFormBuilder($user)
         //     ->add('user_loginame','text')
         //     ->add('user_pass','password')
