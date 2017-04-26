@@ -5,7 +5,7 @@
             <img src="{{ asset('/img/admin/user2-160x160.jpg') }}" class="img-circle" alt="User Image" />
           </div>
           <div class="pull-left info">
-            <p>liuxue</p>
+            <p>{{ info.nickname|default('') }}</p>
             <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
           </div>
       </div>
@@ -19,16 +19,32 @@
           </div>
       </form>
 
+      {#class="active"#}
       <ul class="sidebar-menu">
-          <li class="active"><a href="#"><i class='fa fa-link'></i> <span>Link</span></a></li>
-          <li><a href="#"><i class='fa fa-link'></i> <span>Another Link</span></a></li>
-          <li class="treeview">
-            <a href="#"><i class='fa fa-link'></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
-            <ul class="treeview-menu">
-              <li><a href="#">Link in level 2</a></li>
-              <li><a href="#">Link in level 2</a></li>
-            </ul>
-          </li>
+          {% if info.menu is not empty %}
+            {% for id,menus in info.menu %}
+                {% for key,value in menus %}
+                    <li class="treeview">
+                        <a href="{{ asset('') }}{{ value }}">
+                            <i class='fa fa-link'></i>
+                            <span>{{ key }}</span>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        {% if id in [isParent] %}
+                            <ul class="treeview-menu">
+                                {% for name,url in info.parent_menu[id] %}
+                                    <li>
+                                        <a href="{{ asset('') }}{{ url }}">
+                                            <i class='fa fa-link'></i>{{ name }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            {% endfor %}
+          {% endif %}
       </ul>
   </section>
 </aside>

@@ -87,13 +87,13 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <img src="{{ asset('/img/admin/user2-160x160.jpg') }}" class="user-image" alt="User Image"/>
-                        <span class="hidden-xs">liuxue</span>
+                        <span class="hidden-xs">{{ info.nickname|default('') }}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header">
                             <img src="{{ asset('/img/admin/user2-160x160.jpg') }}" class="img-circle" alt="User Image" />
                             <p>
-                                liuxue - 描述
+                                {{ info.nickname|default('') }} - 描述
                                 <small>Member since Nov. 2012</small>
                             </p>
                         </li>
@@ -113,7 +113,7 @@
                                 <a href="#" class="btn btn-default btn-flat">个人信息</a>
                             </div>
                             <div class="pull-right">
-                                <a href="#" class="btn btn-default btn-flat">退出登录</a>
+                                <a href="{{ asset('') }}user/logout" class="btn btn-default btn-flat">退出登录</a>
                             </div>
                         </li>
                     </ul>

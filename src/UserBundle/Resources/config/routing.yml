@@ -10,6 +10,10 @@ user_login:
     path:     /user/login
     defaults: { _controller: UserBundle:Default:login }
 
+user_logout:
+    path:     /user/logout
+    defaults: { _controller: UserBundle:Default:logout }
+
 user_post_login:
     path:     /user/postLogin
     defaults: { _controller: UserBundle:Default:postLogin }
@@ -23,5 +27,5 @@ common_captcha:
     defaults: { _controller: UserBundle:Default:captcha }
 
 valid_captcha:
-    path:     /valid/captcha
+    path:     /user/valid/captcha
     defaults: { _controller: UserBundle:Default:ajaxValidCaptcha }

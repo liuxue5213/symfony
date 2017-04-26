@@ -8,32 +8,31 @@
 
 namespace UserBundle\Model;
 
-class UserModel extends BaseModel
+use Symfony\Component\HttpFoundation\Request;
+
+class UserModel
 {
-    /**
-     * 判断用户session
-     */
-    public function validLogin()
+
+    public function validLogin(Request $request)
     {
-//        $session = $this->getRequest()->getSession();
-//        if (!empty($session->get('user_info'))) {
-//            return $this->redirect($this->generateUrl('admin_index'));
-//        }
-//        return $this->redirect($this->generateUrl('user_login'));
+        $session = $request->getSession();
+        if (!empty($session->get('user_info'))) {
+            return true;
+        }
+        return false;
     }
 
-    public function isCsrfValid($request)
+    public function isCsrfValid(Request $request)
     {
-//        $headers = $request->headers->all();
-//        $referer = $headers['referer'][0];
-//        $token = $request->get('_csrf_token');
-//        //SESSION
-//        $session = $this->getRequest()->getSession();
-//        $sesReferer = $session->get('_security.secured_area.target_path');
-//        //验证失败  返回首页
-//        if ($referer != $sesReferer || $token != $session->get('_csrf/authenticate')) {
-//            return $this->redirect($this->generateUrl('user_login'));
-//        }
+        $token = $request->get('_csrf_token');
+        //SESSION
+        $session = $request->getSession();
+
+        //验证失败  返回首页
+        if ($token != $session->get('_csrf/authenticate')) {
+            return false;
+        }
+        return true;
     }
     
 }
