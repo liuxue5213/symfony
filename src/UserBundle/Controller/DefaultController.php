@@ -11,7 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use UserBundle\Entity\JsSystemUsers;
 use UserBundle\Entity\JsSystemLogs;
+use UserBundle\Entity\JsSystemUserRole;
 use UserBundle\Entity\JsSystemMenus;
+use UserBundle\Entity\JsSystemRoles;
 use Doctrine\ODM\PHPCR\Query\Builder\QueryBuilder;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
@@ -133,27 +135,9 @@ class DefaultController extends Controller
                 $dbInfo->setLastLoginDate(new \DateTime('now'));
                 $em->flush();
 
-                //获取用户菜单
-                $rows = $this->get('database_connection')->fetchAssoc("select a.menu_ids,a.remark,c.is_open_use FROM js_system_roles a INNER JOIN js_system_user_role b ON a.id = b.role_id INNER JOIN js_system_users c ON c.id = b.user_id WHERE c.id = $user_id AND c.status = 1 AND b.is_del = 0 AND a.status = 1");
-                $menus = $this->get('database_connection')->fetchAll("select id,menu_name,parent_id,menu_link,menu_sort,menu_type,menu_code from js_system_menus WHERE is_del = 0 order by menu_sort ASC");
-
-                //用户角色名称
-                $role_name = empty($rows['remark']) ? '' : $rows['remark'];
-                $role_ids = empty($rows['menu_ids']) ? '' : explode(',', $rows['menu_ids']);
-                $open_use = empty($rows['is_open_use']) ? 0 : $rows['is_open_use'];
                 $nickname = empty($dbInfo->getNickname()) ? 'JSID'.time() : $dbInfo->getNickname();
-
-                $tmp_menus = array();
-                $tmp_two_menus = array();
-                foreach ($menus as $val) {
-                    if (empty($val['parent_id'])) {
-                        if (in_array($val['id'], $role_ids) ) {
-                            $tmp_menus[$val['id']][$val['menu_name']] = $val['menu_link'];
-                        }
-                    } else {
-                        $tmp_two_menus[$val['parent_id']][$val['menu_name']] = $val['menu_link'];
-                    }
-                }
+                //获取权限菜单
+                $tmp = $this->setSessionInfo($user_id);
 
                 //加入日志
                 $info = "用户登录:".$arr['username'];
@@ -164,10 +148,10 @@ class DefaultController extends Controller
                     'id' => $user_id,
                     'nickname' => $nickname,
                     'username' => $dbInfo->getUsername(),
-                    'role_name' => $role_name,
-                    'open_use' => $open_use,
-                    'menu' => $tmp_menus,
-                    'parent_menu' => $tmp_two_menus,
+//                    'role_name' => $role_name,
+                    'open_use' => $tmp['ou'],
+                    'menu' => $tmp['tm'],
+                    'parent_menu' => $tmp['ttm'],
                 );
                 $session->set('user_info', $user_info);
 
@@ -206,11 +190,7 @@ class DefaultController extends Controller
 
     public function registerAction(Request $request)
     {
-        $user = new JsSystemUsers();
-        $form = $this->createFormBuilder($user)
-            ->add('user_loginame','text')
-            ->add('user_pass','password')
-            ->getForm();
+        $info = $request->get('info', '');
 
         //判断TOKEN  POST数据
         if ($request->get('form-data')) {
@@ -218,44 +198,64 @@ class DefaultController extends Controller
             $postData = $request->get('form-data');
             $func = $this->get('user.func');
             $arr = $func->php_decode('johnscott1989101', $postData);
-            // $arr = iconv('gbk', 'utf8', $arr);
+
             //判断解密的数据
-            //if(empty($arr)){
-//            return $this->render('UserBundle:Default:index.html.twig');
-            //    return $this->redirectToRoute($this->generateUrl('user_login'));
-            //}
+            if (empty($arr)) {
+                return $this->redirectToRoute($this->generateUrl('user_register'));
+            }
 
-            print_r($arr);
-            exit;
+            $em = $this->getDoctrine()->getManager();
+            $em->getConnection()->beginTransaction();
+            try{
+                $dbInfo = $em->getRepository('UserBundle:JsSystemUsers')->findOneBy(array('username' => $arr['username']));
+                if (!empty($dbInfo)) {
+                    return $this->redirectToRoute('user_register', array('info' => 'username is used'));
+                }
 
-            // $em = $this->getDoctrine()->getManager();
-            // $dbInfo = $em->getRepository('UserBundle:JsSystemUsers')->findOneBy(array('userLoginame' => $arr['username']));
+                //如果有邀请码 Invitation code
+//                if ($arr['no']) {
+//                    $role_id =
+//                    $status = 1;
+//                    $is_open_use = 1;
+//                } else {
+//                    echo '123';
+//                }
 
-            // if(!empty($dbInfo)){
-            //     // return $this->redirectToRoute('user_register', array('info' => 'username is used'));
-            // }
+                $role_id = $this->get('database_connection')->fetchColumn("select id from js_system_roles WHERE status = 1 AND name = 'anonymous'");
 
-            //判断角色
+                //设置用户信息
+                $user = new JsSystemUsers();
+                $user->setUsername($arr['username']);
+                $user->setNickname('JSID'.time());
+                $user->setPassword(password_hash($arr['password'], PASSWORD_DEFAULT));
+                $user->setEmail($arr['email']);
+                $user->setUrl('');
+                $user->setCreateDate(new \DateTime('now'));
+                $user->setStatus(1);
+                $user->setLastLoginDate(new \DateTime('now'));
+                $user->setIsOpenUse(0);
+                $em->persist($user);
+                $em->flush();
 
-            // $user = new JsSystemUsers();
-            // $user->setUserLoginame($arr['username']);
-            // $user->setUserNickname($arr['nickname']);
-            // $user->setUserPass($arr['password']);
-            // $user->setUserEmail($arr['email']);
-            // $user->setUserUrl();
-            // $user->setUserRegistered(new \DateTime('now'));
-            // $user->setUserStatus(1);
-            // $user->setUserLastime();
-            // $user->setUserRole($role);
-            // $em->persist($user);
-            // $em->flush();
+                $lastId = $user->getId();
+                $role = new JsSystemUserRole();
+                $role->setRoleId($role_id);
+                $role->setUserId($lastId);
+                $role->setIsDel(0);
+                $em->persist($role);
+                $em->flush();
 
+                $this->setSessionInfo($lastId);
+//                print_r($arr);
+//                die;
+                $em->getConnection()->commit();
+            }catch(\Exception $e){
+                $em->getConnection()->rollback();
+            }
 
-            // return $this->redirect($this->generateUrl('admin_index'));
+            return $this->redirect($this->generateUrl('admin_index'));
         }
-        return $this->render('UserBundle:Default:register.html.twig', array(
-             'form' => $form->createView(),
-        ));
+        return $this->render('UserBundle:Default:register.html.twig', array('info' => $info));
     }
 
     public function ajaxValidCaptchaAction(Request $request)
@@ -272,5 +272,46 @@ class DefaultController extends Controller
             return new JsonResponse('10000');
         }
     }
+
+    public function getInvitationNo()
+    {
+
+
+    }
+
+    public function setSessionInfo($user_id)
+    {
+        //获取用户菜单
+        $rows = $this->get('database_connection')->fetchAssoc("select a.menu_ids,a.remark,c.is_open_use FROM js_system_roles a INNER JOIN js_system_user_role b ON a.id = b.role_id INNER JOIN js_system_users c ON c.id = b.user_id WHERE c.id = $user_id AND c.status = 1 AND b.is_del = 0 AND a.status = 1");
+        $menus = $this->get('database_connection')->fetchAll("select id,menu_name,parent_id,menu_link,menu_sort,menu_type,menu_code from js_system_menus WHERE is_del = 0 order by menu_sort ASC");
+
+        //用户角色名称
+        $role_ids = empty($rows['menu_ids']) ? array() : explode(',', $rows['menu_ids']);
+        $open_use = empty($rows['is_open_use']) ? 0 : $rows['is_open_use'];
+
+        $tmp_menus = array();
+        $tmp_two_menus = array();
+        foreach ($menus as $val) {
+            if (empty($val['parent_id'])) {
+                if (in_array($val['id'], $role_ids) ) {
+                    $tmp_menus[$val['id']][$val['menu_name']] = $val['menu_link'];
+                }
+            } else {
+                $tmp_two_menus[$val['parent_id']][$val['menu_name']] = $val['menu_link'];
+            }
+        }
+
+        return array(
+            'ou' => $open_use,
+            'tm' => $tmp_menus,
+            'ttm' => $tmp_two_menus
+        );
+    }
+
+//你好,JohnScott:
+//WXK952718180把您添加到项目：HackWebApp
+//点击进入项目
+//如果按钮无法点击，请点击下面的链接进入:
+//https://my.worktile.com/project/e5de9dfa2ff1440bab5220c3656db98d
 
 }

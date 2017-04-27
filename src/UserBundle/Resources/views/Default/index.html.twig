@@ -2,11 +2,11 @@
 
 {% block content %}
     <h1>JohnScott1989</h1>
-    <form action="{{ path('user_post_login') }}" method="post" onsubmit="return sub()">
+    <form id="login" action="{{ path('user_post_login') }}" method="post" onsubmit="return sub()">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
         <input type="text" id="username" class="username" placeholder="请输入您的用户名！">
-        <input type="password" id="password" class="password" placeholder="请输入您的用户密码！">
-        <input type="Captcha" class="Captcha" name="captcha" placeholder="请输入验证码！" onchange="check_captcha(this.value)">
+        <input id="password" type="password" class="password" placeholder="请输入您的用户密码！">
+        <input id="captcha" type="Captcha" class="Captcha" name="captcha" placeholder="请输入验证码！" onchange="check_captcha(this.value)">
         <img id="img" title="点击刷新" src="{{ asset('') }}user/captcha?width=130&height=40" align="absbottom" style="padding:25px 0px  15px 0px;" onclick="reload()"></img>
         <input type="hidden" id="form-data" name="form-data" value="">
         <button>登录</button>
@@ -29,6 +29,12 @@
 <script type="text/javascript" src="{{ asset('/js/md5.js') }}"></script>
 
 <script>
+    jQuery(document).ready(function() {
+        $('.page-container form .username, .page-container form .password, .page-container form .Captcha').keyup(function(){
+            $(this).parent().find('.error').fadeOut('fast');
+        });
+    });
+
     {# 刷新验证码 #}
     function reload()
     {
@@ -49,7 +55,7 @@
                     $("#form-data").val('');
                     $('.page-container form').find('.error').css('top', '165px');
                     $('.page-container form').find('.error').fadeIn('fast', function(){
-                        $(this).parent().find('.Captcha').focus();
+                        $('#captcha').focus();
                     });
                 } else {
                     $("#form-data").val('1');
@@ -64,9 +70,54 @@
     function sub()
     {
         var pass = true;
-        if ($("#form-data").val() != 1) {
+        var username = $('#username').val();
+        var password = $('#password').val();
+        var captcha = $('#captcha').val();
+        var fd = $("#form-data").val();
+
+        if(username == '') {
+            $(this).find('.error').fadeOut('fast', function(){
+                $(this).css('top', '27px');
+            });
+            $(this).find('.error').fadeIn('fast', function(){
+                $('#username').focus();
+            });
             return false;
         }
+
+        if(password == '') {
+            $(this).find('.error').fadeOut('fast', function(){
+                $(this).css('top', '96px');
+            });
+            $(this).find('.error').fadeIn('fast', function(){
+                $('#password').focus();
+            });
+            return false;
+        }
+
+        if(captcha == '') {
+            $(this).find('.error').fadeOut('fast', function(){
+                $(this).css('top', '165px');
+            });
+            $(this).find('.error').fadeIn('fast', function(){
+                $('#captcha').focus();
+            });
+            return false;
+        }
+
+        if (fd == '') {
+            $('.page-container form').find('.error').css('top', '165px');
+            $(this).find('.error').fadeIn('fast', function(){
+                $('#captcha').focus();
+            });
+            return false;
+        } else {
+            password = $.md5(password);
+            var str = "username="+username+"&password="+password+"&captcha="+captcha;
+            var new_str = navgeek_encode(str);
+            $("#form-data").val(new_str);
+        }
+
         return pass;
     }
 </script>

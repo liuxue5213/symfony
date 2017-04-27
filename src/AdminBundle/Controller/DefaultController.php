@@ -10,29 +10,57 @@ class DefaultController extends Controller
 {
     public function indexAction(Request $request)
     {
-        //用户信息session
-        $session = $request->getSession();
-        if ($session->get('user_info')) {
-            $menu = $session->get('user_info');
-            $par_key = implode(',', array_keys($menu['parent_menu']));
-        } else {
+        $menu = $this->getSessionInfo($request);
+        if (empty($menu)) {
             return $this->redirect($this->generateUrl('user_index'));
-//            //默认显示
-//            $menu = array(
-//                'nickname' => 'JSID'.time(),
-//                'menu' => array(array('系统设置'=>'setting/index')),
-//                'parent_menu' => array(array('基本设置'=>'account/index')),
-//            );
         }
+        $path = $this->getPath($request->getPathInfo());
 
-        return $this->render('AdminBundle:Default:index.html.twig', array(
+        return $this->render(
+            'AdminBundle:Default:index.html.twig',
+            array(
+                'path' => $path,
                 'info' => $menu,
-                'isParent' => $par_key
+            )
+        );
+    }
+
+    public function accountOpenAction(Request $request)
+    {
+        $menu = $this->getSessionInfo($request);
+        if (empty($menu)) {
+            return $this->redirect($this->generateUrl('user_index'));
+        }
+        $path = $this->getPath($request->getPathInfo());
+
+        return $this->render(
+            'AdminBundle:Setting:account.html.twig',
+            array(
+                'path' => $path,
+                'info' => $menu,
             )
         );
     }
 
 
+    public function getSessionInfo(Request $request)
+    {
+        //用户信息session
+        $session = $request->getSession();
+        if ($session->get('user_info')) {
+            $menu = $session->get('user_info');
+            $menu['isParent'] = array_keys($menu['parent_menu']);
+        } else {
+            $menu = array();
+        }
+
+        return $menu;
+    }
+
+    public function getPath($path)
+    {
+        return empty($path) ? '' : ltrim($path, '/');
+    }
 
 
 

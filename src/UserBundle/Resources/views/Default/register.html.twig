@@ -6,19 +6,18 @@
 
 {% block content %}
     <h1>平台注册</h1>
-    <form id="rform" action="{{ path('user_register') }}" method="post" >
+    <form id="rform" action="{{ path('user_register') }}" method="post">
         <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-        <input class="username" type="text" name="username" placeholder="请输入您的用户名！">
-        <input class="password" type="password" name="password" placeholder="请输入您的用户密码！">
-        <input class="nickname" type="text" name="nickname" placeholder="请输入您的昵称！">
-        <input class="email" type="text" name="email" placeholder="请输入您的电子邮箱！">
-        <input class="inviteno" type="text" name="inviteno" placeholder="请输入您的邀请码(选填)！">
-        <input type="hidden" id="form-data" name="form-data" value="">
-        <button type="button" onclick="sub()" >注册</button>
+        <input id="username" type="text" name="username" placeholder="请输入您的用户名！">
+        <input id="password" type="password" name="password" placeholder="请输入您的用户密码！">
+        <input id="nickname" type="text" name="nickname" placeholder="请输入您的昵称！">
+        <input id="email" type="text" name="email" placeholder="请输入您的电子邮箱！">
+        <input id="inviteno" type="text" name="inviteno" placeholder="请输入您的邀请码(选填)！" value="">
+        <input id="form-data" type="hidden" name="form-data" value="">
+        <button onclick="return onSub()">注册</button>
         <div class="error"><span>+</span></div>
     </form>
 {% endblock %}
-
 
 {% block javascripts %}
 {{ parent() }}
@@ -28,20 +27,20 @@
 <script type="text/javascript" src="{{ asset('/js/md5.js') }}"></script>
 
 <script>
-    function sub()
+    function onSub()
     {
-        var username = $(".username").val();
-        var password = $(".password").val();
-        var nickname = $(".nickname").val();
-        var email = $(".email").val();
-        var inviteno = $(".inviteno").val();
+        var username = $("#username").val();
+        var password = $("#password").val();
+        var nickname = $("#nickname").val();
+        var email = $("#email").val();
+        var inviteno = $("#inviteno").val();
 
         if(username == '') {
             $(".error").fadeOut('fast', function(){
                 $(".error").css('top', '27px');
             });
             $(".error").fadeIn('fast', function(){
-                $(".error").parent().find('.username').focus();
+                $("#username").focus();
             });
             return false;
         }
@@ -51,7 +50,7 @@
                 $(".error").css('top', '96px');
             });
             $(".error").fadeIn('fast', function(){
-                $(".error").parent().find('.password').focus();
+                $("#password").focus();
             });
             return false;
         }
@@ -61,7 +60,7 @@
                 $(".error").css('top', '165px');
             });
             $(".error").fadeIn('fast', function(){
-                $(".error").parent().find('.nickname').focus();
+                $("#nickname").focus();
             });
             return false;
         }
@@ -71,19 +70,19 @@
                 $(".error").css('top', '234px');
             });
             $(".error").fadeIn('fast', function(){
-                $(".error").parent().find('.email').focus();
+                $("#email").focus();
             });
             return false;
         }
 
+        $('#username,#password,#nickname,#email').keyup(function(){
+            $(".error").fadeOut('fast');
+        });
+
         password = $.md5(password);
         var str = "username="+username+"&password="+password+"&nickname="+nickname+"&email="+email+"&no="+inviteno;
         var new_str = navgeek_encode(str);
-
-        $('.page-container form .username, .page-container form .password, .page-container form .nickname, .page-container form .email').keyup(function(){
-            $(".error").fadeOut('fast');
-        });
-        window.location.href="/user/register?form-data="+new_str;
+        $("#form-data").val(new_str);
     }
 </script>
 {% endblock %}

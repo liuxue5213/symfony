@@ -30,17 +30,19 @@
                             <span>{{ key }}</span>
                             <i class="fa fa-angle-left pull-right"></i>
                         </a>
-                        {% if id in [isParent] %}
-                            <ul class="treeview-menu">
-                                {% for name,url in info.parent_menu[id] %}
-                                    <li>
-                                        <a href="{{ asset('') }}{{ url }}">
-                                            <i class='fa fa-link'></i>{{ name }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
+                        {% for items in info.isParent %}
+                            {% if id == items %}
+                                <ul class="treeview-menu">
+                                    {% for name,url in info.parent_menu[id] %}
+                                        <li>
+                                            <a href="{{ asset('') }}{{ url }}">
+                                                <i class='fa fa-link'></i>{{ name }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
                     </li>
                 {% endfor %}
             {% endfor %}

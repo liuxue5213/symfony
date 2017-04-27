@@ -1,3 +1,14 @@
 admin_index:
     path:     /admin/index
     defaults: { _controller: AdminBundle:Default:index }
+
+account_open:
+    path:     /setting/account/open
+    defaults: { _controller: AdminBundle:Default:accountOpen }
+
+
+
+
+
+
+
