@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="UserBundle\Entity\JsInvitationNo" table="js_invitation_no">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="invitationNo" type="integer" column="invitation_no" nullable="false">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">邀请码</option>
+      </options>
+    </field>
+    <field name="userId" type="integer" column="user_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="isDel" type="boolean" column="is_del" nullable="false"/>
+    <field name="status" type="boolean" column="status" nullable="false">
+      <options>
+        <option name="comment">是否被使用 0未使用  1使用</option>
+      </options>
+    </field>
+    <field name="roleId" type="integer" column="role_id" nullable="true">
+      <options>
+        <option name="unsigned"/>
+        <option name="comment">权限</option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

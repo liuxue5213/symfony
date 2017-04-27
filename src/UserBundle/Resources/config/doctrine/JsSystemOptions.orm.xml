@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="UserBundle\Entity\JsSystemOptions" table="js_system_options">
+    <unique-constraints>
+      <unique-constraint name="system_option_name_unique" columns="name"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="32" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">配置选项名</option>
+      </options>
+    </field>
+    <field name="value" type="text" column="value" length="65535" nullable="true">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">配置选项值</option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

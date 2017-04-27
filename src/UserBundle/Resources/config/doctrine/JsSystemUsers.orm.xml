@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="UserBundle\Entity\JsSystemUsers" table="js_system_users">
+    <indexes>
+      <index name="user_login_key" columns="username"/>
+      <index name="user_nicename" columns="nickname"/>
+    </indexes>
+    <id name="id" type="bigint" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="username" type="string" column="username" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">登录用户名</option>
+      </options>
+    </field>
+    <field name="nickname" type="string" column="nickname" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">显示昵称</option>
+      </options>
+    </field>
+    <field name="password" type="string" column="password" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">密码</option>
+      </options>
+    </field>
+    <field name="email" type="string" column="email" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">邮箱</option>
+      </options>
+    </field>
+    <field name="url" type="string" column="url" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="createDate" type="datetime" column="create_date" nullable="false">
+      <options>
+        <option name="comment">创建日期</option>
+      </options>
+    </field>
+    <field name="status" type="boolean" column="status" nullable="false">
+      <options>
+        <option name="comment">用户状态  0禁用  1正常</option>
+        <option name="default">1</option>
+      </options>
+    </field>
+    <field name="lastLoginDate" type="datetime" column="last_login_date" nullable="false">
+      <options>
+        <option name="comment">最后登录时间</option>
+        <option name="default">0000-00-00 00:00:00</option>
+      </options>
+    </field>
+    <field name="isOpenUse" type="boolean" column="is_open_use" nullable="false">
+      <options>
+        <option name="comment">用户是否激活使用  0 未激活</option>
+        <option name="default">0</option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>
