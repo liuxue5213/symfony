@@ -1,6 +1,6 @@
 {% extends 'AdminBundle:Layout:index.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ title|default('后台首页') }}{% endblock %}
 
 {% block content %}
     aaaaa
