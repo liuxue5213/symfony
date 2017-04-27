@@ -1,24 +1,10 @@
 {% extends 'AdminBundle:Layout:index.html.twig' %}
 
-{% block title %}后台首页{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="content-wrapper">
-        <section class="content-header">
-            <h1>
-                后台首页
-                <small>描述</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> 控制台</a></li>
-                <li class="active">后台首页</li>
-            </ol>
-        </section>
-        <section class="content">
-            aaaaa
-            {{ path }}
-        </section>
-    </div>
+    aaaaa
+    {{ path }}
 {% endblock %}
 
 {% block javascripts %}

@@ -35,7 +35,21 @@
             {% include 'AdminBundle:Layout:sideBar.html.twig' %}
 
             {# 页面内容 #}
-            {% block content %}{% endblock %}
+            <div class="content-wrapper">
+                <section class="content-header">
+                    <h1>
+                        {{ title }}
+                        {#<small>描述</small>#}
+                    </h1>
+                    <ol class="breadcrumb">
+                        <li><a href="#"><i class="fa fa-dashboard"></i> 控制台</a></li>
+                        <li class="active">{{ title }}</li>
+                    </ol>
+                </section>
+                <section class="content">
+                    {% block content %}{% endblock %}
+                </section>
+            </div>
 
             {# 加载底栏内容 #}
             {% include 'AdminBundle:Layout:footer.html.twig' %}

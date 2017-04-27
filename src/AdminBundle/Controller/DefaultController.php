@@ -33,11 +33,20 @@ class DefaultController extends Controller
         }
         $path = $this->getPath($request->getPathInfo());
 
+        $title = $this->get('database_connection')->fetchColumn("select menu_name from js_system_menus WHERE is_del = 0 AND menu_link = '$path'");
+
+        $userInfo = $this->get('database_connection')->fetchAssoc("select * from js_system_users WHERE status = 1 AND id = :id", array('id' => $menu['id']));
+
+//        $em = $this->getDoctrine()->getManager();
+//        $userInfo = $em->getRepository('UserBundle:JsSystemUsers')->findOneBy(array('id' => $menu['id']));
+
         return $this->render(
             'AdminBundle:Setting:account.html.twig',
             array(
+                'title' => $title,
                 'path' => $path,
                 'info' => $menu,
+                'userInfo' => $userInfo
             )
         );
     }

@@ -1,23 +1,85 @@
 {% extends 'AdminBundle:Layout:index.html.twig' %}
 
-{% block title %}后台首页{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-    <div class="content-wrapper">
-        <section class="content-header">
-            <h1>
-                后台首页
-                <small>描述</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> 控制台</a></li>
-                <li class="active">后台首页</li>
-            </ol>
-        </section>
-        <section class="content">
-            11111
-            {{ path }}
-        </section>
+    <div class="row">
+        <div class="col-md-6">
+            {% if userInfo.is_open_use == 0 %}
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">账户激活</h3>
+                    </div>
+                    <form role="form">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            {% else %}
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">个人信息设置</h3>
+                    </div>
+                    <form role="form">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">昵称</label>
+                                <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">Password</label>
+                                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-6">
+            <div class="box box-warning">
+                <div class="box-header">
+                    <h3 class="box-title">General Elements</h3>
+                </div>
+                <div class="box-body">
+                    <form role="form">
+                        <div class="form-group">
+                            <label>Text</label>
+                            <input type="text" class="form-control" placeholder="Enter ..."/>
+                        </div>
+                        <div class="form-group">
+                            <label>Text Disabled</label>
+                            <input type="text" class="form-control" placeholder="Enter ..." disabled/>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Textarea</label>
+                            <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Textarea Disabled</label>
+                            <textarea class="form-control" rows="3" placeholder="Enter ..." disabled></textarea>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
